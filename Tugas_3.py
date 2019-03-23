@@ -1,7 +1,7 @@
 import csv
 import random as rd
 import math as mt
-
+import numpy as np
 # libraries for the graph only
 import matplotlib.pyplot as plt
 
@@ -149,74 +149,156 @@ class Trainer():
 		self.bias = []
 		self.ex = 0
 
-	def k_iteration(self, validate_block):
-		# //////////////////////////////////////////////////////////////////////////
-		#Before we begin we will initiate all values starting from random number
-		#for the initial values of the theta we will use a random number
-		# ORIGINALLY LIKE THIS 
-		# theta_1 = rd.random()
-		# theta_2 = rd.random()
-		# theta_3 = rd.random()
-		# theta_4 = rd.random()
-		# bias_a = rd.random()
-		# theta_5 = rd.random()
-		# theta_6 = rd.random()
-		# theta_7 = rd.random()
-		# theta_8 = rd.random()
-		# bias_b = rd.random()
+	def k_iteration(self):
+		avg_err_t = [[],[],[],[],[]]
+		avg_err_v = [[],[],[],[],[]]
+		avg_acc_t = [[],[],[],[],[]]
+		avg_acc_v = [[],[],[],[],[]]
 
-		#store theta initial number inside list.
-		# 0 - 3 WILL BE THETHA_1 - THETA_4
-		# 4 - 7 WILL BE THETA_5 - THETHA_8
-		print("\n\nTHIS IS FOR BLOCK %s\nERROR:\n" % (validate_block))
+		for k in range(0,5):
+			validate_block = k
+			# //////////////////////////////////////////////////////////////////////////
+			#Before we begin we will initiate all values starting from random number
+			#for the initial values of the theta we will use a random number
+			# ORIGINALLY LIKE THIS 
+			# theta_1 = rd.random()
+			# theta_2 = rd.random()
+			# theta_3 = rd.random()
+			# theta_4 = rd.random()
+			# bias_a = rd.random()
+			# theta_5 = rd.random()
+			# theta_6 = rd.random()
+			# theta_7 = rd.random()
+			# theta_8 = rd.random()
+			# bias_b = rd.random()
 
-		#NOW
-		#FOR THETAS
-		thetas = [rd.random()] * 8
-		#FOR BIAS
-		bias = [rd.random()] * 2
+			#store theta initial number inside list.
+			# 0 - 3 WILL BE THETHA_1 - THETA_4
+			# 4 - 7 WILL BE THETA_5 - THETHA_8
+			#NOW
+			#FOR THETAS
+			thetas = [rd.random()] * 8
+			#FOR BIAS
+			bias = [rd.random()] * 2
 
-		epoch_graph = []
-		error_train_graph = []
-		accuracy_train_graph = []
-		error_val_graph = []
-		accuracy_val_graph = []
+			epoch_graph = [] 
+			error_train_graph = []
+			accuracy_train_graph = []
+			error_val_graph = []
+			accuracy_val_graph = []
 
-		for epoc in range(1,101):
-			#initalize
+			print("\n\nTHIS IS FOR BLOCK %s\nERROR:\n" % (validate_block))
 
-			error = 0
-			epoch_err_1 = 0		#value to store the epoch
-			epoch_err_2 = 0 	
-			
-			accuracy = 0		#value to store accuracy
-			accuracy_1 = 0
-			accuracy_2 = 0
+			for epoc in range(0,100):
+				#initalize
+
+				error = 0
+				epoch_err_1 = 0		#value to store the epoch
+				epoch_err_2 = 0 	
+				
+				accuracy = 0		#value t
+				accuracy_1 = 0
+				accuracy_2 = 0
 
 
-			#calls the function to calculate every block
+				#calls the function to calculate every block
 
-			new_data = self.training_data(validate_block, thetas, bias, epoc)
-			
-			thetas = new_data[0]
-			bias = new_data[1]
+				new_data = self.training_data(validate_block, thetas, bias, epoc)
+				
+				thetas = new_data[0]
+				bias = new_data[1]
 
-			epoch_graph.append(epoc)
-			error_train_graph.append(new_data[2])
-			accuracy_train_graph.append(new_data[3])
-			error_val_graph.append(new_data[4])
-			accuracy_val_graph.append(new_data[5])
+				epoch_graph.append(epoc)
+				error_train_graph.append(new_data[2])
+				accuracy_train_graph.append(new_data[3])
+				
+				error_val_graph.append(new_data[4])
+				accuracy_val_graph.append(new_data[5])
 
+				avg_err_t[validate_block].append(new_data[2])
+				avg_err_v[validate_block].append(new_data[4])
+
+				avg_acc_t[validate_block].append(new_data[3])
+				avg_acc_v[validate_block].append(new_data[5])
+
+			error_train_graph = np.array(error_train_graph)
+			error_val_graph = np.array(error_val_graph)
+			accuracy_train_graph = np.array(accuracy_train_graph)
+			accuracy_val_graph = np.array(accuracy_val_graph)
 			# to plot the graph
 			plt.figure(1)	#this is meant for first and second error graph, both will be combined in same grpah
 			plt.plot(epoch_graph, error_train_graph, label='Training')
 			plt.plot(epoch_graph, error_val_graph,  label='Validation')
+			plt.title('Error Graph Block %s' % (k+1))
+			plt.legend(loc = "best")
 
 			plt.figure(2)	#this is meant for first and second error graph, both will be combined in same grpah
 			plt.plot(epoch_graph, accuracy_train_graph, label='Training')
 			plt.plot(epoch_graph, accuracy_val_graph,  label='Validation')
+			plt.title('Accuracy Graph Block %s' % (k+1))
+			plt.legend(loc = "best")
+
+			plt.show()
+
+		avg_err_t_graph = []
+		avg_err_v_graph = [] 
+
+		avg_acc_t_graph = []
+		avg_acc_v_graph = []
+
+		avg_epoch_graph = []
+
+		avg_err_t = np.array(avg_err_t)
+		avg_err_v = np.array(avg_err_v)
+
+		avg_acc_t = np.array(avg_acc_t)
+		avg_acc_v = np.array(avg_acc_v)
+
+		# print(avg_acc_t)
+
+		for epoc in range(0,100):
+			avg_err_t_avg = 0.0
+			avg_err_v_avg = 0.0
+			avg_acc_t_avg = 0.0
+			avg_acc_v_avg = 0.0
+			
+			for data in range(0,5):
+				avg_err_t_avg += avg_err_t[data][epoc]
+				avg_err_v_avg += avg_err_v[data][epoc]
+
+				avg_acc_t_avg += avg_acc_t[data][epoc]
+				avg_acc_v_avg += avg_acc_v[data][epoc]
+
+			avg_err_t_graph.append((avg_err_t_avg/5))
+			avg_err_v_graph.append(avg_err_v_avg/5)
+
+			avg_acc_t_graph.append(avg_acc_t_avg/5)
+			avg_acc_v_graph.append(avg_acc_v_avg/5)
+
+			avg_epoch_graph.append(epoc+1)
+
+		# print(avg_acc_t_graph)
+
+		# valke = 0
+		# for j in range(5):
+		# 	valke += avg_err_t[j][99]
+		# print(valke/5)
+
+		plt.figure(3)
+		plt.plot(avg_epoch_graph, avg_err_t_graph, label = 'Training Error average')
+		plt.plot(avg_epoch_graph, avg_err_v_graph, label = 'Validation Error average')
+		plt.title('Average Error Graph Block')
+		plt.legend(loc = "best")
+
+		plt.figure(4)
+		plt.plot(avg_epoch_graph, avg_acc_t_graph, label = 'Training Accuracy average')
+		plt.plot(avg_epoch_graph, avg_acc_v_graph, label = 'Validation Accuracy average')
+		plt.title('Average Accuracy Graph Block')
+		plt.legend(loc = "best")
 
 		plt.show()
+
+		
 
 
 	# def block_iteration(self, validate_block, thetas, bias):
@@ -313,33 +395,17 @@ class Trainer():
 					if(prediction_1 == y1 and prediction_2 == y2):
 						accuracy += 1
 
-		epoch_err = epoch_err/120
-		accuracy = accuracy/120
-		self.ex = self.ex + 1
-		print("%s. error: %s + accuracy: %s" % (self.ex, epoch_err, accuracy))
+		val_err_1 = 0
+		val_err_2 = 0
+		val_err = 0
+		val_acc = 0
 
-		#Now Validate for the BLOCK. for 30 rows
-		val_data = self.validating_data(block_num, row, thetas, bias)
-
-		update = [thetas, bias, epoch_err, accuracy, val_data[0], val_data[1]]
-
-		return update
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% VALIDATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-	def validating_data(self, val_blockNum, v_row, thetas, bias):
+		#THIS IF FOR VALIDATION
 		for v_row in range(30):
-			formula = self.calc
-
-			SP = formula.getSepalPetal(val_blockNum, v_row) # SP WILL SIGNIFY THE LIST FOR SEPAL/PETAL VALUES
-
-			val_err_1 = 0
-			val_err_2 = 0
-			val_err = 0
-			val_acc = 0
+			SP = formula.getSepalPetal(block_num, v_row) # SP WILL SIGNIFY THE LIST FOR SEPAL/PETAL VALUES
 
 			# we pre-calculate to simplify calculating target and others
-						
+					
 			r1 = thetas[0] * SP[0]		
 			r2 = thetas[1] * SP[1]
 			r3 = thetas[2] * SP[2]
@@ -352,9 +418,10 @@ class Trainer():
 			prediction_1 = formula.prediction(sigmoid_1)
 			err_1 = formula.error(sigmoid_1, y1)
 
+
 			# *******************************************************
-						
-				#prepare for second prediction
+					
+			#prepare for second prediction
 
 			r5 = thetas[4] * SP[0]		#same with the previous calculation, but with differnt thetas
 			r6 = thetas[5] * SP[1]
@@ -367,6 +434,9 @@ class Trainer():
 			prediction_2 = formula.prediction(sigmoid_2)	#call the prediction function
 			err_2 = formula.error(sigmoid_2, y2)
 
+
+			# **********************************************************************************************************
+
 			#calculate the error
 			val_err +=  (err_1 + err_2)
 
@@ -378,9 +448,79 @@ class Trainer():
 
 		val_data = [val_err, val_acc]
 
-		print("%s. v_error: %s + v_accuracy: %s" % (self.ex,val_err, val_acc))
 
-		return val_data
+		epoch_err = epoch_err/120
+		accuracy = accuracy/120
+		self.ex = self.ex + 1
+		print("%s. error: %s + accuracy: %s" % (self.ex, epoch_err, accuracy))
+		print("%s. v_error: %s + v_accuracy: %s" % (self.ex, val_err, val_acc))
+
+		#Now Validate for the BLOCK. for 30 rows
+		# val_data = self.validating_data(block_num, trained_thetas, trained_bias)
+
+		update = [thetas, bias, epoch_err, accuracy, val_data[0], val_data[1]]
+
+		return update
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% VALIDATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	# def validating_data(self, val_blockNum, thetas, bias):
+	# 	thetas_comp = thetas
+	# 	bias_comp = bias
+		
+	# 	for v_row in range(30):
+	# 		formula = self.calc
+
+	# 		SP = formula.getSepalPetal(val_blockNum, v_row) # SP WILL SIGNIFY THE LIST FOR SEPAL/PETAL VALUES
+
+	# 		val_err_1 = 0
+	# 		val_err_2 = 0
+	# 		val_err = 0
+	# 		val_acc = 0
+
+	# 		# we pre-calculate to simplify calculating target and others
+						
+	# 		r1 = thetas_comp[0] * SP[0]		
+	# 		r2 = thetas_comp[1] * SP[1]
+	# 		r3 = thetas_comp[2] * SP[2]
+	# 		r4 = thetas_comp[3] * SP[3]
+	# 		y1 = SP[4]
+
+	# 		#to calculate each of the values we call the function
+	# 		target_1 = formula.target(r1,r2,r3,r4,bias[0])
+	# 		sigmoid_1 = formula.sigmoid(target_1)
+	# 		prediction_1 = formula.prediction(sigmoid_1)
+	# 		err_1 = formula.error(sigmoid_1, y1)
+
+	# 		# *******************************************************
+						
+	# 			#prepare for second prediction
+
+	# 		r5 = thetas_comp[4] * SP[0]		#same with the previous calculation, but with differnt thetas
+	# 		r6 = thetas_comp[5] * SP[1]
+	# 		r7 = thetas_comp[6] * SP[2]
+	# 		r8 = thetas_comp[7] * SP[3]
+	# 		y2 = SP[5]
+
+	# 		target_2 = formula.target(r5,r6,r7,r8, bias[1]) #we all the target function, formula in function
+	# 		sigmoid_2 = formula.sigmoid(target_2)		#we call sigmoid function, formula is also in function
+	# 		prediction_2 = formula.prediction(sigmoid_2)	#call the prediction function
+	# 		err_2 = formula.error(sigmoid_2, y2)
+
+	# 		#calculate the error
+	# 		val_err +=  (err_1 + err_2)
+
+	# 		if(prediction_2 == y2):
+	# 			val_acc += 1
+
+	# 	val_err = val_err/30
+	# 	val_acc = val_acc/30
+
+	# 	val_data = [val_err, val_acc]
+
+	# 	print("%s. v_error: %s + v_accuracy: %s" % (self.ex,val_err, val_acc))
+
+	# 	return val_data
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -392,6 +532,6 @@ train = Trainer(calc)
 
 #we start with training the data
 #This loop is to DETERMINE WHICH BLOCK IS THE VALIDATION BLOCK
-for k in range(5):
-	train.k_iteration(k)
+
+train.k_iteration()
 		
